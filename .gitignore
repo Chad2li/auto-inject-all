@@ -1,0 +1,35 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### MAC ###
+.DS_Store
+
+### Utils ###
+mysqldump
+
+
+# privilege
+**/*-prod.properties
+*.jar
+
+# mvn version backup
+*.versionsBackup
+# doc
+# wait for del /app-api-impl/src/main/resources/conf/local/
+**/local/*
+**/prod/*
+allure-results/

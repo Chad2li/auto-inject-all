@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.github.chad2li.autoinject.core.AutoInjectConfiguration
