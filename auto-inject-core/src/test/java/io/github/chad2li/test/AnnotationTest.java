@@ -1,8 +1,7 @@
 package io.github.chad2li.test;
 
 import cn.hutool.core.util.ReflectUtil;
-import io.github.chad2li.autoinject.core.annotation.NormalInject;
-import io.github.chad2li.autoinject.core.cst.InjectCst;
+import io.github.chad2li.autoinject.core.annotation.InjectNormal;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,13 +19,13 @@ public class AnnotationTest {
     @Test
     public void reflectMethod() {
         Field genderField = ReflectUtil.getField(Demo.class, "gender");
-        Annotation anno = genderField.getAnnotation(NormalInject.class);
+        Annotation anno = genderField.getAnnotation(InjectNormal.class);
         String targetName = ReflectUtil.invoke(anno, "targetField");
         Assert.assertEquals("abc", targetName);
     }
 
     public static class Demo {
-        @NormalInject(targetField = "abc")
+        @InjectNormal(targetField = "abc")
         private Integer gender;
     }
 }

@@ -5,7 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
-import io.github.chad2li.autoinject.dict.dto.DictItemDto;
+import io.github.chad2li.autoinject.dict.dto.DictItem;
 import org.springframework.lang.Nullable;
 
 /**
@@ -56,7 +56,7 @@ public class DictInjectUtil {
      * @see DictInjectUtil#dictKey(String, Object, Object)
      * @since 1 by chad at 2023/9/14
      */
-    public static <I> String dictKey(DictItemDto<I> dict) {
+    public static <I> String dictKey(DictItem<I> dict) {
         return dictKey(dict.getType(), dict.getParentId(), dict.getId());
     }
 

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 自动注入样式
@@ -44,10 +42,9 @@ public class UserController {
 
     @InjectResult
     @GetMapping("list")
-    public BaseRes<List> list() {
+    public BaseRes<List<UserVo>> list() {
         List<UserVo> list = new ArrayList();
         list.add(user());
-        Set<Long> genderSet = list.stream().map(UserVo::getGenderId).collect(Collectors.toSet());
         return BaseRes.succ(list);
     }
 
@@ -60,6 +57,7 @@ public class UserController {
         user.setLevelId(3L);
         user.setGenderId(4L);
         user.setA(5L);
+        user.setPromotionId(10L);
         AddressVo address = new AddressVo();
         address.setCityDictId(1L);
         user.setAddress(address);

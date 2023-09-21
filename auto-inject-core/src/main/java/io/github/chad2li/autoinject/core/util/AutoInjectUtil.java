@@ -44,7 +44,7 @@ public class AutoInjectUtil {
      * @since 1 by chad at 2022/5/19
      */
     public static <A extends Annotation, T> Set<InjectKey<A, Object>> queryDictAnnotation(Object fileObj) {
-        return injectionDict(fileObj, true, null, null);
+        return injectionDict(null, fileObj, true, null, null);
     }
 
     /**
@@ -55,22 +55,24 @@ public class AutoInjectUtil {
      * @author chad
      * @since 1 by chad at 2023/8/25
      */
-    public static void injectionDict(
-            Object fileObj, Map fileMap, KeyFunction keyFunction) {
-        injectionDict(fileObj, false, fileMap, keyFunction);
+    public static void injectionDict(@Nullable String strategy, Object fileObj, Map fileMap,
+                                     KeyFunction keyFunction) {
+        injectionDict(strategy, fileObj, false, fileMap, keyFunction);
     }
 
     /**
      * 解析对象，将其中有 {@link Inject} 或有其子注解的属性，自动进行字典值注入
      *
-     * @param fileObj 对象
-     * @param isQuery 是否仅获取注解
-     * @param fileMap 所有字典值
+     * @param strategy 处理的策略，查询时为null
+     * @param fileObj  对象
+     * @param isQuery  是否仅获取注解
+     * @param fileMap  所有字典值
      * @author chad
      * @since 1 by chad at 2022/5/19
      */
     public static <A extends Annotation, Key, Value> Set<InjectKey<A, Object>>
-    injectionDict(@Nullable Object fileObj, boolean isQuery, @Nullable Map<Key, Value> fileMap,
+    injectionDict(@Nullable String strategy, @Nullable Object fileObj, boolean isQuery,
+                  @Nullable Map<Key, Value> fileMap,
                   KeyFunction<A, Value, Object> keyFunction) {
         if (null == fileObj) {
             log.debug("Result is null");
@@ -79,13 +81,14 @@ public class AutoInjectUtil {
         Set<InjectKey<A, Object>> fileIdSet;
         if (fileObj instanceof Iterable) {
             // iterable
-            fileIdSet = injectionIterable((Iterable<?>) fileObj, isQuery, fileMap, keyFunction);
+            fileIdSet = injectionIterable(strategy, (Iterable<?>) fileObj, isQuery, fileMap,
+                    keyFunction);
         } else if (fileObj instanceof Map) {
             // map
-            fileIdSet = injectionMap((Map<?, ?>) fileObj, isQuery, fileMap, keyFunction);
+            fileIdSet = injectionMap(strategy, (Map<?, ?>) fileObj, isQuery, fileMap, keyFunction);
         } else {
             // other
-            fileIdSet = injectionObject(fileObj, isQuery, fileMap, keyFunction);
+            fileIdSet = injectionObject(strategy, fileObj, isQuery, fileMap, keyFunction);
         }
         return CollUtil.newHashSet(fileIdSet);
     }
@@ -104,10 +107,18 @@ public class AutoInjectUtil {
      */
     @Nullable
     private static <A extends Annotation, T, Key, Value> Set<InjectKey<A, Object>>
-    injectionDict(Object fileObj, Field field, boolean isQuery, @Nullable Map<Key, Value> fileMap
+    injectionDict(@Nullable String strategy, Object fileObj, Field field, boolean isQuery, @Nullable Map<Key, Value> fileMap
             , KeyFunction<A, Value, Object> keyFunction) {
         Class<?> resultCls = fileObj.getClass();
         A injectAnnotation = getInjectAnnotation(field);
+        String thisStrategy = AutoInjectUtil.strategy(injectAnnotation);
+        if (ObjectUtil.isAllNotEmpty(strategy, thisStrategy) &&
+                !CharSequenceUtil.equalsIgnoreCase(strategy, thisStrategy)) {
+            // 都不为空且不匹配的注解
+            // strategy为空，表示查询
+            // thisStrategy为空，需要递归
+            return Collections.emptySet();
+        }
         // file field value
         Object fieldValue;
         try {
@@ -117,7 +128,7 @@ public class AutoInjectUtil {
         }
         if (null == injectAnnotation) {
             // 递归 深度解析
-            return injectionDict(fieldValue, isQuery, fileMap, keyFunction);
+            return injectionDict(strategy, fieldValue, isQuery, fileMap, keyFunction);
         }
         log.debug("inject found inject annotation, obj:{}, field:{}, annotation:{}",
                 fileObj.getClass().getName(), field.getName(),
@@ -149,7 +160,12 @@ public class AutoInjectUtil {
         }
 
         // 设置值
-        setItemValue(fileMap, fileObj, injectAnnotation, fileItemName, fieldValue, keyFunction);
+        try {
+            setItemValue(fileMap, fileObj, injectAnnotation, fileItemName, fieldValue, keyFunction);
+        } catch (Exception e) {
+            log.error("auto inject set value error, {}.{} to {}, value:{}",
+                    fileObj.getClass().getName(), field.getName(), fileItemName, fieldValue, e);
+        }
 
         return resultValue;
     }
@@ -205,7 +221,7 @@ public class AutoInjectUtil {
      * @since 1 by chad at 2022/5/19
      */
     private static <A extends Annotation, T, Key, Value> Set<InjectKey<A, Object>>
-    injectionIterable(Iterable<?> iterable, boolean isQuery, @Nullable Map<Key, Value> fileMap,
+    injectionIterable(@Nullable String strategy, Iterable<?> iterable, boolean isQuery, @Nullable Map<Key, Value> fileMap,
                       KeyFunction keyFunction) {
         if (CollectionUtil.isEmpty(iterable)) {
             log.debug("{} empty", iterable.getClass().getName());
@@ -216,7 +232,7 @@ public class AutoInjectUtil {
         // 遍历 iterable
         Set<InjectKey<A, Object>> subDictSet;
         for (Object o : iterable) {
-            subDictSet = injectionDict(o, isQuery, fileMap, keyFunction);
+            subDictSet = injectionDict(strategy, o, isQuery, fileMap, keyFunction);
             if (CollUtil.isNotEmpty(subDictSet)) {
                 fileSet.addAll(subDictSet);
             }
@@ -234,7 +250,8 @@ public class AutoInjectUtil {
      * @since 1 by chad at 2022/5/19
      */
     private static <A extends Annotation, T, Key, Value> Set<InjectKey<A, Object>>
-    injectionMap(Map<?, ?> map, boolean isQuery, @Nullable Map<Key, Value> fileMap,
+    injectionMap(@Nullable String strategy, Map<?, ?> map, boolean isQuery, @Nullable Map<Key,
+            Value> fileMap,
                  KeyFunction keyFunction) {
         if (CollectionUtil.isEmpty(map)) {
             log.debug("{} empty", map.getClass().getName());
@@ -242,7 +259,7 @@ public class AutoInjectUtil {
         }
 
         // 遍历 iterable
-        return injectionIterable(map.values(), isQuery, fileMap, keyFunction);
+        return injectionIterable(strategy, map.values(), isQuery, fileMap, keyFunction);
     }
 
     /**
@@ -255,8 +272,8 @@ public class AutoInjectUtil {
      * @since 1 by chad at 2022/5/19
      */
     private static <A extends Annotation, T, Id, Value> Set<InjectKey<A, Object>> injectionObject(
-            Object fileObj, boolean isQuery, @Nullable Map<Id, Value> fileMap,
-            KeyFunction keyFunction) {
+            @Nullable String strategy, Object fileObj, boolean isQuery,
+            @Nullable Map<Id, Value> fileMap, KeyFunction keyFunction) {
         Class<?> resultCls = fileObj.getClass();
         log.debug("Dict injection: {}", resultCls.getName());
 
@@ -276,7 +293,7 @@ public class AutoInjectUtil {
         Set<InjectKey<A, Object>> fileSet = new HashSet<>(4);
         Set<InjectKey<A, Object>> injectKey;
         for (Field field : fields) {
-            injectKey = injectionDict(fileObj, field, isQuery, fileMap, keyFunction);
+            injectKey = injectionDict(strategy, fileObj, field, isQuery, fileMap, keyFunction);
             if (null != injectKey) {
                 fileSet.addAll(injectKey);
             }
@@ -436,7 +453,19 @@ public class AutoInjectUtil {
         return cls == Object.class;
     }
 
-    public static <A extends Annotation> String strategy(A annotation) {
+    /**
+     * 获取注解上的策略
+     *
+     * @param annotation 注解Inject或其子类o
+     * @return 策略，如果无则为null
+     * @author chad
+     * @since 1 by chad at 2023/9/20
+     */
+    @Nullable
+    public static <A extends Annotation> String strategy(@Nullable A annotation) {
+        if (null == annotation) {
+            return null;
+        }
         Inject inject;
         if (isInject(annotation)) {
             inject = (Inject) annotation;

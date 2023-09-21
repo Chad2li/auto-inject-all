@@ -1,7 +1,7 @@
 package cn.lyjuan.dictauto.demo.dto;
 
 
-import io.github.chad2li.autoinject.dict.dto.DictItemDto;
+import io.github.chad2li.autoinject.dict.dto.DictItem;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +16,10 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class DictItemDemoDto extends DictItemDto<Long> {
+public class DictItemDemo extends DictItem<Long> {
     private String remark;
 
-    public DictItemDemoDto(Long id, Long parentId, String type, String name, String remark) {
+    public DictItemDemo(Long id, Long parentId, String type, String name, String remark) {
         super(id, parentId, type, name);
         this.remark = remark;
     }

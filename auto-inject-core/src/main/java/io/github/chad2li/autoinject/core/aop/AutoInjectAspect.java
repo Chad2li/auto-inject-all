@@ -94,7 +94,7 @@ public class AutoInjectAspect {
             // 3.3 分批查询 id 对应的值 map.key: id, map.value: 注入的值
             Map<Object, Object> value = handler.list(entry.getValue());
             // 3.3 注入
-            AutoInjectUtil.injectionDict(result, value, handler);
+            AutoInjectUtil.injectionDict(entry.getKey(), result, value, handler);
         }
     }
 

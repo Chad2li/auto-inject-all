@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DictItemDto<I> implements Serializable {
+public class DictItem<I> implements Serializable {
     /**
      * dict id，同一类型一唯一
      */

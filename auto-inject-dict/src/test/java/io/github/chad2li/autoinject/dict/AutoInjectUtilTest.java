@@ -6,7 +6,8 @@ import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.core.util.AutoInjectUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
-import io.github.chad2li.autoinject.dict.dto.DictItemDto;
+import io.github.chad2li.autoinject.dict.cst.DictCst;
+import io.github.chad2li.autoinject.dict.dto.DictItem;
 import io.github.chad2li.autoinject.dict.strategy.DictInjectStrategy;
 import io.github.chad2li.autoinject.dict.util.DictInjectUtil;
 import lombok.Getter;
@@ -14,7 +15,6 @@ import lombok.ToString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class AutoInjectUtilTest {
         dictProps.setDictItemSuffix(InjectCst.FIELD_DICT_ITEM_SUFFIX);
         dictInjectStrategy = new DictInjectStrategy() {
             @Override
-            public List<DictItemDto> list(String... type) {
+            public List<DictItem> list(String... type) {
                 return null;
             }
 
@@ -69,7 +69,7 @@ public class AutoInjectUtilTest {
         Assert.assertTrue(typeSet.contains("gender"));
         Assert.assertTrue(typeSet.contains("city"));
         // 2.
-        AutoInjectUtil.injectionDict(demo, dictMap(), dictInjectStrategy);
+        AutoInjectUtil.injectionDict(DictCst.DICT, demo, dictMap(), dictInjectStrategy);
         assertDemo(demo);
         // - list
         assertDemo(demo.getList().get(0));
@@ -91,40 +91,40 @@ public class AutoInjectUtilTest {
     }
 
 
-    private Map<String, DictItemDto<String>> dictMap() {
-        Map<String, DictItemDto<String>> dictMap = new HashMap<>();
+    private Map<String, DictItem<String>> dictMap() {
+        Map<String, DictItem<String>> dictMap = new HashMap<>();
         // gender
-        DictItemDto<String> male = dict("1", "0", "gender", "男");
-        DictItemDto<String> female = dict("2", "0", "gender", "女");
-        DictItemDto<String> unknown = dict("0", "0", "gender", "未知");
+        DictItem<String> male = dict("1", "0", "gender", "男");
+        DictItem<String> female = dict("2", "0", "gender", "女");
+        DictItem<String> unknown = dict("0", "0", "gender", "未知");
         putDictMap(dictMap, male);
         putDictMap(dictMap, female);
         putDictMap(dictMap, unknown);
         // city
-        DictItemDto<String> zhejiang = dict("zhejiang", "0", "city", "浙江");
-        DictItemDto<String> anhui = dict("anhui", "0", "city", "安徽");
-        DictItemDto<String> hangzhou = dict("hangzhou", "zhejiang", "city", "杭州");
-        DictItemDto<String> yiwu = dict("yiwu", "zhejiang", "city", "义乌");
-        DictItemDto<String> hefei = dict("hefei", "anhui", "city", "合肥");
+        DictItem<String> zhejiang = dict("zhejiang", "0", "city", "浙江");
+        DictItem<String> anhui = dict("anhui", "0", "city", "安徽");
+        DictItem<String> hangzhou = dict("hangzhou", "zhejiang", "city", "杭州");
+        DictItem<String> yiwu = dict("yiwu", "zhejiang", "city", "义乌");
+        DictItem<String> hefei = dict("hefei", "anhui", "city", "合肥");
         putDictMap(dictMap, zhejiang);
         putDictMap(dictMap, anhui);
         putDictMap(dictMap, hangzhou);
         putDictMap(dictMap, yiwu);
         putDictMap(dictMap, hefei);
         // role
-        DictItemDto<String> admin = dict("normal", "0", "role", "管理员");
-        DictItemDto<String> normal = dict("admin", "0", "role", "普通用户");
+        DictItem<String> admin = dict("normal", "0", "role", "管理员");
+        DictItem<String> normal = dict("admin", "0", "role", "普通用户");
         putDictMap(dictMap, admin);
         putDictMap(dictMap, normal);
         return dictMap;
     }
 
-    private void putDictMap(Map<String, DictItemDto<String>> dictMap, DictItemDto<String> dict) {
+    private void putDictMap(Map<String, DictItem<String>> dictMap, DictItem<String> dict) {
         dictMap.put(DictInjectUtil.dictKey(dict), dict);
     }
 
-    private DictItemDto<String> dict(String id, String parentId, String type, String name) {
-        return new DictItemDto<>(id, parentId, type, name);
+    private DictItem<String> dict(String id, String parentId, String type, String name) {
+        return new DictItem<>(id, parentId, type, name);
     }
 
 
@@ -179,13 +179,13 @@ public class AutoInjectUtilTest {
         @Getter
         private Set<DemoVo> set;
         @Getter
-        private DictItemDto<String> genderItem;
+        private DictItem<String> genderItem;
         @Getter
-        private DictItemDto<String> provinceDict;
+        private DictItem<String> provinceDict;
         @Getter
-        private DictItemDto<String> cityDict;
+        private DictItem<String> cityDict;
         @Getter
-        private DictItemDto<String> roleItem;
+        private DictItem<String> roleItem;
 
         public void setGender(String gender) {
             this.gender = gender;
@@ -211,19 +211,19 @@ public class AutoInjectUtilTest {
             this.set = set;
         }
 
-        public void setGenderItem(DictItemDto<String> genderItem) {
+        public void setGenderItem(DictItem<String> genderItem) {
             this.genderItem = genderItem;
         }
 
-        public void setProvinceDict(DictItemDto<String> provinceDict) {
+        public void setProvinceDict(DictItem<String> provinceDict) {
             this.provinceDict = provinceDict;
         }
 
-        public void setCityDict(DictItemDto<String> cityDict) {
+        public void setCityDict(DictItem<String> cityDict) {
             this.cityDict = cityDict;
         }
 
-        public void setRoleItem(DictItemDto<String> roleItem) {
+        public void setRoleItem(DictItem<String> roleItem) {
             this.roleItem = roleItem;
         }
     }

@@ -7,9 +7,8 @@ import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.cst.DictCst;
-import io.github.chad2li.autoinject.dict.dto.DictItemDto;
+import io.github.chad2li.autoinject.dict.dto.DictItem;
 import io.github.chad2li.autoinject.dict.util.DictInjectUtil;
-import lombok.Setter;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  * @since created at 2023/9/14 08:27
  */
 public abstract class DictInjectStrategy<Id>
-        implements AutoInjectStrategy<String, Id, DictItemDto<Id>, InjectDict> {
+        implements AutoInjectStrategy<String, Id, DictItem<Id>, InjectDict> {
     @Resource
     private DictAutoProperties dictProps;
 
@@ -50,7 +49,7 @@ public abstract class DictInjectStrategy<Id>
 
 
     @Override
-    public Map<String, DictItemDto<Id>> list(List<InjectKey<InjectDict, Id>> injectKeys) {
+    public Map<String, DictItem<Id>> list(List<InjectKey<InjectDict, Id>> injectKeys) {
         if (CollUtil.isEmpty(injectKeys)) {
             return Collections.emptyMap();
         }
@@ -60,7 +59,7 @@ public abstract class DictInjectStrategy<Id>
             typeSet.add(injectKey.getAnno().type());
         }
         // 2. 查询 type
-        List<DictItemDto<Id>> valueList = this.list(typeSet.toArray(new String[0]));
+        List<DictItem<Id>> valueList = this.list(typeSet.toArray(new String[0]));
         // 3. 转 map
         return valueList.stream().collect(Collectors.toMap(it -> DictInjectUtil.dictKey(it.getType(),
                 it.getParentId(), it.getId()), Function.identity()));
@@ -74,5 +73,5 @@ public abstract class DictInjectStrategy<Id>
      * @author chad
      * @since 1 by chad at 2023/8/25
      */
-    public abstract List<DictItemDto<Id>> list(String... type);
+    public abstract List<DictItem<Id>> list(String... type);
 }

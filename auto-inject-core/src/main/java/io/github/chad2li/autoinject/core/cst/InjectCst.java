@@ -34,6 +34,6 @@ public class InjectCst {
     /**
      * 普通的字值属性
      */
-    public static final String NORMAL_STRATEGY = "normal";
+    public static final String NORMAL_STRATEGY = "NORMAL";
 
 }

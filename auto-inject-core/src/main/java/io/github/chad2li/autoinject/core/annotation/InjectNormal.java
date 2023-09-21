@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface NormalInject {
+public @interface InjectNormal {
     /**
      * 将值注入的属性名 <br/>
      * 由 {@link Inject#targetFieldName()} 值决定
