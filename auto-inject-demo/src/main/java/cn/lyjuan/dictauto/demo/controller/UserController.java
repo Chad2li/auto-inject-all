@@ -3,7 +3,6 @@ package cn.lyjuan.dictauto.demo.controller;
 import cn.lyjuan.dictauto.demo.vo.AddressVo;
 import cn.lyjuan.dictauto.demo.vo.UserVo;
 import io.github.chad2li.autoinject.core.annotation.InjectResult;
-import io.github.chad2li.baseutil.http.vo.res.BaseRes;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,25 +26,25 @@ public class UserController {
 
     @InjectResult
     @GetMapping("user/{id}")
-    public BaseRes<UserVo> user(@PathVariable Long id) {
-        return BaseRes.succ(user());
+    public UserVo user(@PathVariable Long id) {
+        return user();
     }
 
     @InjectResult
     @GetMapping("map")
-    public BaseRes<Map> map() {
+    public Map map() {
         Map<String, UserVo> map = new HashMap<>();
         map.put("user", user());
 
-        return BaseRes.succ(map);
+        return map;
     }
 
     @InjectResult
     @GetMapping("list")
-    public BaseRes<List<UserVo>> list() {
+    public List<UserVo> list() {
         List<UserVo> list = new ArrayList();
         list.add(user());
-        return BaseRes.succ(list);
+        return list;
     }
 
 

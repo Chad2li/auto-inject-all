@@ -8,7 +8,6 @@ import io.github.chad2li.autoinject.core.util.AutoInjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.core.annotation.Order;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Aspect
-@Order(AutoInjectAspect.AOP_ORDER_SEQ)
 public class AutoInjectAspect {
     /**
      * springBean注入名称
