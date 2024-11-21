@@ -3,10 +3,10 @@ package io.github.chad2li.autoinject.core.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import io.github.chad2li.autoinject.core.annotation.Inject;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
@@ -112,8 +112,8 @@ public class AutoInjectUtil {
         Class<?> resultCls = fileObj.getClass();
         A injectAnnotation = getInjectAnnotation(field);
         String thisStrategy = AutoInjectUtil.strategy(injectAnnotation);
-        if (ObjectUtil.isAllNotEmpty(strategy, thisStrategy) &&
-                !CharSequenceUtil.equalsIgnoreCase(strategy, thisStrategy)) {
+        if (ToolUtil.isAllNotEmpty(strategy, thisStrategy) &&
+                !StrUtil.equalsIgnoreCase(strategy, thisStrategy)) {
             // 都不为空且不匹配的注解
             // strategy为空，表示查询
             // thisStrategy为空，需要递归
@@ -313,11 +313,12 @@ public class AutoInjectUtil {
     private static <A extends Annotation> String getTargetName(A anno, String fileName) {
         Inject inject = anno.annotationType().getAnnotation(Inject.class);
         String targetFieldName = inject.targetFieldName();
-        Assert.notEmpty(targetFieldName, "targetFieldName cannot be empty: "
-                + anno.annotationType().getName());
-
+        if (StrUtil.isEmpty(targetFieldName)) {
+            throw new NullPointerException("targetFieldName cannot be empty: "
+                    + anno.annotationType().getName());
+        }
         String targetName = ReflectUtil.invoke(anno, targetFieldName);
-        if (CharSequenceUtil.isNotEmpty(targetName)) {
+        if (StrUtil.isNotEmpty(targetName)) {
             return targetName.trim();
         }
 
@@ -346,7 +347,7 @@ public class AutoInjectUtil {
     public static <A extends Annotation, Id, MapV, MapK> Object getInjectValue(
             Map<MapK, MapV> fileMap, Object inObj, A anno, Id fileId,
             KeyFunction<A, Id, MapK> keyFunction) {
-        if (ObjectUtil.hasEmpty(fileMap, fileId)) {
+        if (ToolUtil.hasEmpty(fileMap, fileId)) {
             return null;
         }
         MapV subValue;
@@ -359,7 +360,7 @@ public class AutoInjectUtil {
             for (Id id : idColl) {
                 key = keyFunction.key(anno, id, inObj);
                 subValue = fileMap.get(key);
-                if (ObjectUtil.isNotEmpty(subValue)) {
+                if (ToolUtil.isNotEmpty(subValue)) {
                     resultColl.add(subValue);
                 }
             }
@@ -371,7 +372,7 @@ public class AutoInjectUtil {
             for (Map.Entry<MapK, Id> entry : ((Map<MapK, Id>) fileId).entrySet()) {
                 key = keyFunction.key(anno, entry.getValue(), inObj);
                 subValue = fileMap.get(key);
-                if (ObjectUtil.isNotEmpty(subValue)) {
+                if (ToolUtil.isNotEmpty(subValue)) {
                     resultMap.put(entry.getKey(), subValue);
                 }
             }

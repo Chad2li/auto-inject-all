@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,9 @@ public class InjectReflectUtil extends ReflectUtil {
      * @since 1 by chad at 2022/5/19
      */
     public static Field[] getFieldsDirectlyHasGetter(Class<?> beanClass, boolean withSuperClassFields) throws SecurityException {
-        Assert.notNull(beanClass);
+        if (null == beanClass) {
+            throw new NullPointerException("beanClass cannot be null");
+        }
         List<Field> fieldList = new ArrayList<>();
 
         for (Class searchType = beanClass; searchType != null; searchType = withSuperClassFields ? searchType.getSuperclass() : null) {
@@ -47,15 +51,16 @@ public class InjectReflectUtil extends ReflectUtil {
                 }
 
                 String methodName = "get" + fieldNameFirstUp;
-                boolean has = null != ReflectUtil.getPublicMethod(searchType, methodName, null);
+                boolean has = null != InjectReflectUtil.getPublicMethod(searchType, methodName,
+                        null);
                 if (!has) {
                     methodName = "is" + fieldNameFirstUp;
-                    has = null != ReflectUtil.getPublicMethod(searchType, methodName, null);
+                    has = null != InjectReflectUtil.getPublicMethod(searchType, methodName, null);
                 }
 
                 if (!has) {
                     methodName = "has" + fieldNameFirstUp;
-                    has = null != ReflectUtil.getPublicMethod(searchType, methodName, null);
+                    has = null != InjectReflectUtil.getPublicMethod(searchType, methodName, null);
                 }
 
                 if (!has) {
@@ -70,5 +75,17 @@ public class InjectReflectUtil extends ReflectUtil {
             return new Field[0];
         }
         return fieldList.toArray(new Field[0]);
+    }
+
+    public static Method getPublicMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) throws SecurityException {
+        try {
+            return clazz.getMethod(methodName, paramTypes);
+        } catch (NoSuchMethodException ex) {
+            return null;
+        }
+    }
+
+    public static boolean hasField(Class<?> clazz, String fieldName) {
+        return null != getField(clazz, fieldName);
     }
 }

@@ -1,10 +1,10 @@
 package io.github.chad2li.autoinject.dict.strategy;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
+import io.github.chad2li.autoinject.core.util.ToolUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.cst.DictCst;
 import io.github.chad2li.autoinject.dict.dto.DictItem;
@@ -38,7 +38,7 @@ public abstract class DictInjectStrategy<Id>
 
     @Override
     public String key(InjectDict anno, Id id, Object inObj) {
-        if (ObjectUtil.hasEmpty(anno, id, inObj)) {
+        if (ToolUtil.hasEmpty(anno, id, inObj)) {
             return "";
         }
         // 获取parentId

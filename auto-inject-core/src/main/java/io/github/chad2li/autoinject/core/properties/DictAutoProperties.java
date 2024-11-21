@@ -1,6 +1,6 @@
 package io.github.chad2li.autoinject.core.properties;
 
-import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.StrUtil;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,21 +31,21 @@ public class DictAutoProperties {
     private String dictItemSuffix;
 
     public void setDefaultParentId(String defaultParentId) {
-        if (CharSequenceUtil.isEmpty(defaultParentId)) {
+        if (StrUtil.isEmpty(defaultParentId)) {
             return;
         }
         this.defaultParentId = defaultParentId;
     }
 
     public void setDictIdSuffix(String dictIdSuffix) {
-        if (CharSequenceUtil.isEmpty(dictIdSuffix)) {
+        if (StrUtil.isEmpty(dictIdSuffix)) {
             return;
         }
         this.dictIdSuffix = dictIdSuffix;
     }
 
     public void setDictItemSuffix(String dictItemSuffix) {
-        if (CharSequenceUtil.isEmpty(dictItemSuffix)) {
+        if (StrUtil.isEmpty(dictItemSuffix)) {
             return;
         }
         this.dictItemSuffix = dictItemSuffix;

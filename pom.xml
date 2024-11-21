@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>io.github.chad2li</groupId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <artifactId>auto-inject-all</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -203,7 +203,7 @@
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
-                <version>5.8.21</version>
+                <version>4.1.14</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
