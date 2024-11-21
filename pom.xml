@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>io.github.chad2li</groupId>
-    <version>1.0.2</version>
+    <version>1.0.4</version>
     <artifactId>auto-inject-all</artifactId>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
@@ -235,47 +235,47 @@
                 <artifactId>spring-boot-autoconfigure</artifactId>
                 <version>${spring.verion}</version>
                 <scope>provided</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-context</artifactId>
-                    </exclusion>
-                </exclusions>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.springframework</groupId>-->
+<!--                        <artifactId>spring-context</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-aop</artifactId>
                 <version>${spring.verion}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.yaml</groupId>
-                        <artifactId>snakeyaml</artifactId>
-                    </exclusion>
-                </exclusions>
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>ch.qos.logback</groupId>-->
+<!--                        <artifactId>logback-classic</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.yaml</groupId>-->
+<!--                        <artifactId>snakeyaml</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.5.12</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>2.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>6.1.14</version>
-                <scope>provided</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>ch.qos.logback</groupId>-->
+<!--                <artifactId>logback-classic</artifactId>-->
+<!--                <version>1.5.12</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.yaml</groupId>-->
+<!--                <artifactId>snakeyaml</artifactId>-->
+<!--                <version>2.0</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework</groupId>-->
+<!--                <artifactId>spring-context</artifactId>-->
+<!--                <version>6.1.14</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>

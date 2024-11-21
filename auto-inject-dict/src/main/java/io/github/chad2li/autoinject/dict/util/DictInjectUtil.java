@@ -6,10 +6,9 @@ import cn.hutool.core.util.ReflectUtil;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.dto.DictItem;
-import org.springframework.lang.Nullable;
 
 /**
- * TODO-类说明
+ * 字典注入工具
  *
  * @author chad
  * @copyright 2023 chad
@@ -25,7 +24,6 @@ public class DictInjectUtil {
      * @author chad
      * @since 1 by chad at 2023/8/25
      */
-    @Nullable
     public static String parseParentId(Object dictObj, InjectDict injectDict,
                                        DictAutoProperties dictProps) {
         if (ObjectUtil.hasEmpty(dictObj, injectDict)) {

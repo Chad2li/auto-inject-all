@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.chad2li</groupId>
         <artifactId>auto-inject-all</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,27 +14,12 @@
     <packaging>jar</packaging>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+        <plugins><!-- 将组件部署到OSSRH，并发布到Central Repository -->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
@@ -44,12 +29,12 @@
         <dependency>
             <groupId>io.github.chad2li</groupId>
             <artifactId>auto-inject-core</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>io.github.chad2li</groupId>
             <artifactId>auto-inject-dict</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -76,11 +61,21 @@
             <artifactId>spring-boot-starter-aop</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-classic</artifactId>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.yaml</groupId>-->
+<!--            <artifactId>snakeyaml</artifactId>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-context</artifactId>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
 

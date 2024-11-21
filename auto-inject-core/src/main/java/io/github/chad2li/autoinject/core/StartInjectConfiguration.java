@@ -17,7 +17,7 @@ import java.util.Set;
  */
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(DictAutoProperties.class)
-public class AutoInjectConfiguration {
+public class StartInjectConfiguration {
     @Bean(AutoInjectAspect.SPRING_BEAN_NAME)
     public AutoInjectAspect dictAopHandler(Set<AutoInjectStrategy<?, ?, ?, ?>> strategyHandlerSet) {
         return new AutoInjectAspect(strategyHandlerSet);

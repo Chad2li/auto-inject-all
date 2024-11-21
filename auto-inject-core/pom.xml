@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.chad2li</groupId>
         <artifactId>auto-inject-all</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,101 +16,8 @@
     <description>auto injection for dict</description>
     <url>https://github.com/chad2li/${project.parent.artifactId}</url>
 
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>actable</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>chad</name>
-            <email>li17206@163.com</email>
-            <organization>chad</organization>
-        </developer>
-    </developers>
-    <scm>
-        <tag>master</tag>
-        <connection>https://github.com/chad2li/${project.parent.artifactId}</connection>
-        <developerConnection>https://github.com/chad2li/</developerConnection>
-        <url>https://github.com/chad2li/${project.parent.artifactId}/tree/${project.scm.tag}</url>
-    </scm>
-
-
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <!-- 生成源码 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- 生成 javadoc，关闭doclint，避免注解检查不通过 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <additionalOptions>
-                                <!-- jdk8 -->
-                                <additionalOption>-Xdoclint:none</additionalOption>
-                            </additionalOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- maven gpg 对组件进行签名 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- 将组件部署到OSSRH，并发布到Central Repository -->
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 
 
@@ -140,13 +47,8 @@
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
