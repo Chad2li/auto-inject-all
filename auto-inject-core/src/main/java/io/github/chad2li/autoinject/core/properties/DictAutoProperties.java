@@ -1,7 +1,7 @@
 package io.github.chad2li.autoinject.core.properties;
 
-import cn.hutool.core.util.StrUtil;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
+import io.github.chad2li.autoinject.core.util.StrUtil;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

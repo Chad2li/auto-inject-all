@@ -1,7 +1,5 @@
 package io.github.chad2li.autoinject.core.annotation;
 
-import io.github.chad2li.autoinject.core.cst.InjectCst;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -27,7 +25,15 @@ public @interface Inject {
     String strategy() default "";
 
     /**
-     * 注入目标属性名称
+     * 注入值的来源属性
      */
-    String targetFieldName() default InjectCst.DEFAULT_TARGET_FIELD_NAME;
+    String fromField() default "";
+
+    /**
+     * 提取值的ep表达式
+     * <pre>
+     *     策略返回值作为上下文，如果spel为空，则直接使用返回值
+     * </pre>
+     */
+    String targetSpel() default "";
 }

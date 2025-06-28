@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Set;
 
 /**
@@ -17,14 +18,25 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InjectKey<A extends Annotation, T> {
+public class InjectKey<A extends Annotation, K> {
     /**
      * 注解
      */
     private A anno;
-
+    /**
+     * 所在对象
+     */
+    private Object obj;
+    /**
+     * 来源属性值
+     */
+    private Object fromFieldValue;
+    /**
+     * 所在属性
+     */
+    private Field targetField;
     /**
      * 注解的值
      */
-    private Set<T> idSet;
+    private Set<K> idSet;
 }

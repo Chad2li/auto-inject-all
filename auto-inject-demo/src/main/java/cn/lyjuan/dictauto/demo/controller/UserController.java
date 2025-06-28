@@ -1,5 +1,6 @@
 package cn.lyjuan.dictauto.demo.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.lyjuan.dictauto.demo.vo.AddressVo;
 import cn.lyjuan.dictauto.demo.vo.UserVo;
 import io.github.chad2li.autoinject.core.annotation.InjectResult;
@@ -57,8 +58,9 @@ public class UserController {
         user.setGenderId(4L);
         user.setA(5L);
         user.setPromotionId(10L);
+        user.setPromotionIdList(CollUtil.newArrayList(10L, 11L));
         AddressVo address = new AddressVo();
-        address.setCityDictId(1L);
+//        address.setCityDictId(1L);
         user.setAddress(address);
         return user;
     }

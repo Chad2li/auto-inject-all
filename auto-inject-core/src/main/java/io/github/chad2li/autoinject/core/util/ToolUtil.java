@@ -1,9 +1,5 @@
 package io.github.chad2li.autoinject.core.util;
 
-import cn.hutool.core.collection.IterUtil;
-import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.StrUtil;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -49,14 +45,14 @@ public class ToolUtil {
             return true;
         }
 
-        if (obj instanceof CharSequence) {
-            return StrUtil.isEmpty((CharSequence) obj);
+        if (obj instanceof String) {
+            return StrUtil.isEmpty((String) obj);
         } else if (obj instanceof Map) {
-            return MapUtil.isEmpty((Map) obj);
+            return CollUtil.isEmpty((Map) obj);
         } else if (obj instanceof Iterable) {
-            return IterUtil.isEmpty((Iterable) obj);
+            return CollUtil.isEmpty((Iterable) obj);
         } else if (obj instanceof Iterator) {
-            return IterUtil.isEmpty((Iterator) obj);
+            return CollUtil.isEmpty((Iterator) obj);
         } else if (ArrayUtil.isArray(obj)) {
             return ArrayUtil.isEmpty(obj);
         }

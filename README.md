@@ -1,73 +1,35 @@
-# 待办
-
-# 简介
+# 一、简介
 
 本项目继承自 `dict-auto`[Gitee](https://gitee.com/CodeinChad/dict-auto)|[Github](https://github.com/Chad2li/dict-auto)
 
-在项目开发过程中，会有一些数据转换的需要，比如：需要将字典code转为对应的字典值；将文件Id转为对应的文件信息；
-订单关联的商品id需要转换为商品信息（非通用功能，有独立的业务逻辑，需要自行考量）。    
-此时就需要批量查询对应的数据id，再批量查询对应的数据并回填，如下代码：
+在项目开发过程中，会有一些数据转换的需要，比如：需要将字典code转为对应的字典值；
+将文件Id转为对应的文件信息； 订单关联的商品id需要转换为商品信息等。    
+通常的做法是使用关联表查询、或者先查询主数据再填充其他信息，然而这些方式通用性不强
+且有代码侵入性。    
+此项目应运而生。
+该项目通过反射解析到需要注入的属性，并根据匹配的策略获取对应的数据，再将数据填充到
+属性中。    
 
-- UserVo
-
+如下代码，`promotionName`是通过`promotionId`查询活动数据，并将活动名称自动填充
+到`promotionName`字段：
 ```java
-
-@Data
 public class UserVo implements Serializable {
-    ...
     /**
      * 活动id
      */
     private Long promotionId;
     /**
-     * promotionId对应的活动名称
+     * 活动名称
      */
+    @Inject(strategy = "PROMOTION", fromField = "promotionId")
     private String promotionName;
-    ...
 }
 ```
 
-- UserController#list
+# 二、简单使用
 
-```java
-public List<UserVo> list(){
-        // 已有用户信息，需要根据promotionId回填promotionName
-        AutoPageHelper.startPage();
-        List<UserVo> userList=userMapper.list();
-
-        // ******************************* 重复代码 重复代码 重复代码 *******************************
-        // 获取所有的promotionId
-        Set<Long> promotionIdSet=userList.stream().map(User::getPromotionId).collect(Collectors.toSet());
-        // 批量获取promotionName数据, key: promotionId
-        Map<Long, String> promotionIdNameMap=promotionMapper.selectNameMapByIds(promotionIdSet);
-
-        // 回填promotionName数据
-        for(UserVo user:userList){
-        String promotionNameMap=promotionIdNameMap.get(user.getPromotionId());
-        user.setPromotionName(promotionNameMap);
-        }
-        // ******************************* 重复代码 重复代码 重复代码 *******************************
-
-        return userList;
-        }    
-```
-
-在上述代码中，大量的重复代码，为了让开发关注业务逻辑的功能实现，避免大量重复开发工作，`auto-inject-all`
-项目应运而生。     
-该项目将数值映射工作提取通用方法， 使用注解即可方便实现上述代码中将`genderId`转为`Gender`对象的操作。
-
-# 三、使用
-
-## 3.1 基础使用
-
-使用本项目的数值自动映射功能，需要实现三步：
-
-1. 在方法上使用`@InjectResult`注解，标明当前方法返回值需要执行自动映射功能
-2. 在方法返回值对象的属性上使用自定义（如：`InjectPromotionName`）注解
-3. 实现数值获取策略，提供数值映射的数据
-
-### 3.1.1 数值映射注解
-
+使用本项目的数值自动注入功能，需要实现三步：
+1. 在方法上使用`@InjectResult`注解，标明当前方法的返回值需要执行自动注入功能；
 参考代码 [UserController#user](auto-inject-demo/src/main/java/cn/lyjuan/dictauto/demo/controller/UserController.java)
 
 ```java
@@ -82,46 +44,28 @@ public class UserController {
 }
 ```
 
-使用`@InjectResult`标明方法的传回值需要进行自动映射
-
-### 3.1.2 方法返回值注入属性
+2. 在返回值对象的属性上使用注入注解（`Inject`），标明`strategy（策略）`、
+   `fromField（来源）`和`targetSpel（取值的spel表达式）`；
 
 ```java
 public class UserVo implements Serializable {
     /**
      * 活动id
      */
-    @InjectPromotionName(targetField = "promotionName")
     private Long promotionId;
     /**
      * 活动名称
      */
+    @Inject(strategy = "PROMOTION", fromField = "promotionId", targetSpel = "value.name")
     private String promotionName;
 }
 ```
+- `strategy` 标明策略为`PROMOTION`；
+- `fromField` 标明需要`promotionId`来查询`promotionName`；
+- `targetSpel` 标明取策略返回对象的`name`属性为值，`value`为el表达式的根元素。
 
-`InjectPromotionName`为自定义的注入`promotionName`属性的注解，该注解<font color='green'>关键</font>
-代码如下：
-
-```java
-
-@Inject(strategy = "PROMOTION_NAME")
-public @interface InjectPromotionName {
-    /**
-     * 将值注入的属性名 <br/>
-     * 由 {@link Inject#targetFieldName()} 值决定
-     */
-    String targetField() default "";
-}
-```
-
-- 其上有`@Inject`并标明策略为`PROMOTION_NAME`
-- `targetField`可指定被注入的属性名称。`targetField`名称也可由`Inject#targetFieldName()`自定义
-
-### 3.1.3 数值获取策略
-
-需要通过`promotionId`获取到对应`promotionName`的值，为了提高性能并增加自主性，数据获取策略会批量传入对应策略注解
-标注的所有值，代码如下：
+3. 实现策略，提供自动注入的数据    
+需要通过`promotionId`获取到对应`promotionName`的值，代码如下：
 
 ```java
 
@@ -132,14 +76,34 @@ public class PromotionService implements AutoInjectStrategy<Long, Long, String, 
         return "PROMOTION_NAME";
     }
 
+    // ids 是根据Inject注解的fromField采集到的所有promotionId值
+    // 返回的key为promotionId
     @Override
-    public Map<Long, String> list(List<InjectKey<InjectPromotionName, Long>> injectKeys) {
-        Map<Long, String> promotionIdNameMap = ... 
+    public Map<Long, PromotionDto> list(Set<Long> ids) {
+        //根据 promotionIdSet 查询promotion，key: promotionId
+        Map<Long, PromotionDto> promotionIdMap = ... 
         ...
-        return promotionIdNameMap;
+        return promotionIdMap;
     }
 }
+// promotion对象
+public class PromotionDto {
+    private Long id;
+    // targetSpel = "value.name"：取此值自动注入
+    private String name;
+}
 ```
+
+上述3步即可在全局实现根据`promotionId`自动注入`promotionName`。
+
+# 三、更多功能
+## 3.1 自定义注解
+## 3.2 自定义key
+## 3.3 额外操作
+## 3.4 targetSpel
+
+# 四、字典
+
 
 所有的策略都需要实现`AutoInjectStrategy`，实现两个方法：
 
@@ -159,19 +123,13 @@ public class PromotionService implements AutoInjectStrategy<Long, Long, String, 
 - A:  
   第4个泛型，标明对应的属性注解`InjectPromotionName`
 
+通常情况下，我们只需要根据id查询，实现`userFillQuery`方法，并返回`false`；并实现`list(Set<Id> idSet)`
+方法，即可实现简单的id查询。    
+为避免大数据量导致查询失败，需要分批查询，防止一次查询过多数据。
+
 ## 通用实现
 
 为了方便开发，本项目实现的基本的注入映射实现，但数据的获取策略还是需要自行实现
-
-### Normal
-
-如果项目中只有一个属性需要自动映射注入，即可用`Normal`策略
-
-- [InjectCst#NORMAL_STRATEGY](auto-inject-core/src/main/java/io/github/chad2li/autoinject/core/cst/InjectCst.java#NORMAL_STRATEGY)
-  策略名为`NORMAL`
-- [InjectNormal](auto-inject-core/src/main/java/io/github/chad2li/autoinject/core/annotation/InjectNormal.java)
-  属性注入标注    
-  <font color='yellow'>需要自行实现数据获取功能</font>
 
 ### Dict（字典）
 
@@ -221,13 +179,21 @@ VALUES
 	 ('0',0,'WITHDRAW_STATUS','CLOSED','已关闭','WITHDRAW_STATUS/CLOSED/',1,0,1,1,'2023-09-07 23:50:01','2023-09-07 23:50:01');
  ```
 
-### 记录
+### 版本记录
+- 1.0.0 chad 2023-09-15     
+  自动注入数据    
+  更新README
+- 1.0.3 chad 2024-11-11    
+  发布all
+- 1.0.4 chad 2024-11-20    
+  取消自动启动
+- 1.0.6 chad 2024-11-21    
+  兼容hutool版本
+- 2.0.0 chad 2025-05-21
+  去除hutool依赖     
+  使用SPEL注入字段    
+  解析结果映射对象，填充时不再解析
 
-| 版本    | 创作者  | 时间         | 内容                        |
-|-------|------|------------|---------------------------|
-| 1.0.0 | chad | 2023-09-15 | 自动注入数据                    |
-|       | chad | 2023-09-21 | 更新README                  |
-| 1.0.3 | chad | 2024-11-11 | 发布all                     |
-| 1.0.4 | chad | 2024-11-20 | 取消自动启动                    |
-| 1.0.6 | chad | 2024-11-21 | 兼容hutool版本，后续考虑去除hutool依赖 |
+### 后续计划
+- 支持缓存解析结果，相同对象不重复解析，支持动态对象
 

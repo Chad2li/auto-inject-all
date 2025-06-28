@@ -1,21 +1,17 @@
 package io.github.chad2li.autoinject.core.aop;
 
-import cn.hutool.core.collection.CollUtil;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
-import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
 import io.github.chad2li.autoinject.core.util.AutoInjectUtil;
+import io.github.chad2li.autoinject.core.util.CollUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 
-import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 自动注入拦截器
@@ -75,34 +71,17 @@ public class AutoInjectAspect {
     @AfterReturning(value = "@annotation(io.github.chad2li.autoinject.core.annotation.InjectResult)",
             returning = "result")
     public void afterReturning(Object result) {
-        // 1. 获取所有包含inject注解
-        Set<InjectKey<Annotation, Object>> injectKeys = AutoInjectUtil.queryDictAnnotation(result);
-        if (CollUtil.isEmpty(injectKeys)) {
-            return;
-        }
-        // 2. 对注解按 strategy 分组, key: strategy
-        Map<String, List<InjectKey<Annotation, Object>>> group = injectKeys.stream().collect(
-                Collectors.groupingBy(it -> AutoInjectUtil.strategy(it.getAnno())));
-        // 3. 遍历分组
-        for (Map.Entry<String, List<InjectKey<Annotation, Object>>> entry : group.entrySet()) {
-            // 3.1 获取 strategy 对应的 handler
-            AutoInjectStrategy<Object, Object, Object, Annotation> handler =
-                    strategyHandler(entry.getKey());
-            // 3.2 获取分组下所有的 id
-            // 3.3 分批查询 id 对应的值 map.key: id, map.value: 注入的值
-            Map<Object, Object> value = handler.list(entry.getValue());
-            // 3.3 注入
-            AutoInjectUtil.injectionDict(entry.getKey(), result, value, handler);
-        }
+        // 处理注入
+        AutoInjectUtil.inject(result, it -> this.strategyHandler(it));
     }
 
     @SuppressWarnings("unchecked")
-    public <Key, Id, Value, A extends Annotation> AutoInjectStrategy<Key, Id, Value, A> strategyHandler(
+    public AutoInjectStrategy<?, ?, ?, ?> strategyHandler(
             String strategy) {
         AutoInjectStrategy<?, ?, ?, ?> handler = strategyHandlerMap.get(strategy);
         if (null == handler) {
             throw new NullPointerException("not found inject handler, strategy:" + strategy);
         }
-        return (AutoInjectStrategy<Key, Id, Value, A>) handler;
+        return handler;
     }
 }

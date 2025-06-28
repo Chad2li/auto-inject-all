@@ -1,5 +1,7 @@
 package io.github.chad2li.autoinject.core.strategy;
 
+import io.github.chad2li.autoinject.core.dto.InjectKey;
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -14,15 +16,14 @@ public interface KeyFunction<A extends Annotation, Id, Key> {
     /**
      * 根据注解及ID生成对应的key，默认为id
      *
-     * @param anno  注解
-     * @param id    注解属性的id值
-     * @param inObj 当前id属性所在的对象，用于获取对象其他值
+     * @param injectKey 注入信息
+     * @param id        注解属性的id值
      * @return 需要与 {@link AutoInjectStrategy#list(List)} 返回值的key对应，默认为 {@code id}
      * @author chad
      * @since 1 by chad at 2023/9/14
      */
     @SuppressWarnings("unchecked")
-    default Key key(A anno, Id id, Object inObj) {
+    default Key key(InjectKey<A, Id> injectKey, Id id) {
         return (Key) id;
     }
 }

@@ -6,6 +6,7 @@ import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author chad
@@ -15,38 +16,45 @@ import java.io.Serializable;
 @Data
 public class UserVo implements Serializable {
     private int id;
-    @InjectDict(type = "GENDER")
+
     private Long genderId;
     /**
      * 自动解析被注入的属性名，genderId去掉后缀Id，加上后缀Item
      */
+    @InjectDict(type = "GENDER")
     private DictItemDemo genderItem;
     /**
      * 活动id
      */
-    @InjectPromotionName(targetField = "promotionName")
     private Long promotionId;
     /**
-     * promotionId对应的活动名称
+     * 使用spel提取指定内容
      */
+    @InjectPromotionName(fromField = "promotionId", targetSpel = "value.name")
     private String promotionName;
-
-
-    @InjectDict(type = "LEVEL")
+    /**
+     * 整个对象
+     */
+    @InjectPromotionName
+    private PromotionVo promotionItem;
+    private List<Long> promotionIdList;
+    @InjectPromotionName(fromField = "promotionIdList", targetSpel = "value.name")
+    private List<String> promotionNameList;
     private Long levelId;
+    @InjectDict(type = "LEVEL")
     private DictItemDemo levelItem;
     private String name;
     /**
      * 没有 DictId 后缀
      */
-    @InjectDict(type = "AGE")
     private Long age;
+    @InjectDict(type = "AGE", fromField = "age")
     private DictItemDemo ageItem;
     /**
      * 一个字符字段
      */
-    @InjectDict(type = "A", targetField = "abDict")
     private Long a;
+    @InjectDict(type = "A", fromField = "a")
     private DictItemDemo abDict;
     private AddressVo address;
 

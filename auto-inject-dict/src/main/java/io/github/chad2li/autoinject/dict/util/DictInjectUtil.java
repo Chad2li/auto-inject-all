@@ -1,8 +1,8 @@
 package io.github.chad2li.autoinject.dict.util;
 
-import cn.hutool.core.util.ReflectUtil;
-import cn.hutool.core.util.StrUtil;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
+import io.github.chad2li.autoinject.core.util.ReflectUtil;
+import io.github.chad2li.autoinject.core.util.StrUtil;
 import io.github.chad2li.autoinject.core.util.ToolUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.dto.DictItem;

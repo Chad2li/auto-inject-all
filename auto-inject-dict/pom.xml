@@ -6,7 +6,8 @@
     <parent>
         <groupId>io.github.chad2li</groupId>
         <artifactId>auto-inject-all</artifactId>
-        <version>1.0.6</version>
+        <version>2.0.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>auto-inject-dict</artifactId>
@@ -23,17 +24,7 @@
         <dependency>
             <groupId>io.github.chad2li</groupId>
             <artifactId>auto-inject-core</artifactId>
-            <version>1.0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <scope>provided</scope>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -54,6 +45,26 @@
 <!--            <groupId>org.springframework</groupId>-->
 <!--            <artifactId>spring-context</artifactId>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>
