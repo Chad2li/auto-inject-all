@@ -3,6 +3,7 @@ package cn.lyjuan.dictauto.demo.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.lyjuan.dictauto.demo.annotation.InjectPromotionName;
 import cn.lyjuan.dictauto.demo.consts.DemoConst;
+import cn.lyjuan.dictauto.demo.vo.PromotionVo;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
 import org.springframework.stereotype.Service;
@@ -22,14 +23,14 @@ import java.util.stream.Collectors;
  * @since created at 2023/9/16 10:24
  */
 @Service
-public class PromotionService implements AutoInjectStrategy<Long, Long, String, InjectPromotionName> {
+public class PromotionService implements AutoInjectStrategy<Long, Long, PromotionVo, InjectPromotionName> {
     @Override
     public String strategy() {
         return DemoConst.PROMOTION_NAME;
     }
 
     @Override
-    public Map<Long, String> list(List<InjectKey<InjectPromotionName, Long>> injectKeys) {
+    public Map<Long, PromotionVo> list(List<InjectKey<InjectPromotionName, Long>> injectKeys) {
         if (CollUtil.isEmpty(injectKeys)) {
             return Collections.emptyMap();
         }
@@ -43,9 +44,9 @@ public class PromotionService implements AutoInjectStrategy<Long, Long, String, 
             return Collections.emptyMap();
         }
         // 这里是mock的值，实际情况应该是查数据库或缓存
-        Map<Long, String> promotionIdNameMap = new HashMap<>(idSet.size());
+        Map<Long, PromotionVo> promotionIdNameMap = new HashMap<>(idSet.size());
         for (Long id : idSet) {
-            promotionIdNameMap.put(id, "这是一个测试活动-" + id);
+            promotionIdNameMap.put(id, new PromotionVo(id, "这是一个测试活动-" + id));
         }
         return promotionIdNameMap;
     }

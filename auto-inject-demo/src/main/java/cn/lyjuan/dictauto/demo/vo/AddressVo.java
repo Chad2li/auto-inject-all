@@ -12,5 +12,5 @@ import lombok.Data;
 @Data
 public class AddressVo {
     @InjectDict(type = "CITY")
-    private Long cityDictId;
+    private Long cityDictItem;
 }

@@ -21,9 +21,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface InjectPromotionName {
+    String fromField() default "";
     /**
-     * 将值注入的属性名 <br/>
-     * 由 {@link Inject#targetFieldName()} 值决定
+     * 提取值的ep表达式
+     * <pre>
+     *     策略返回值作为上下文，如果spel为空，则直接使用返回值
+     * </pre>
      */
-    String targetField() default "";
+    String targetSpel() default "";
 }

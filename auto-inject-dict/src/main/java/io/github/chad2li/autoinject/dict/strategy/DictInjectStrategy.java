@@ -1,10 +1,10 @@
 package io.github.chad2li.autoinject.dict.strategy;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
 import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
+import io.github.chad2li.autoinject.core.util.CollUtil;
+import io.github.chad2li.autoinject.core.util.ToolUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.cst.DictCst;
 import io.github.chad2li.autoinject.dict.dto.DictItem;
@@ -37,16 +37,16 @@ public abstract class DictInjectStrategy<Id>
     }
 
     @Override
-    public String key(InjectDict anno, Id id, Object inObj) {
-        if (ObjectUtil.hasEmpty(anno, id, inObj)) {
+    public String key(InjectKey<InjectDict, Id> injectKey, Id id) {
+        if (ToolUtil.hasEmpty(injectKey.getAnno(), id, injectKey.getObj())) {
             return "";
         }
         // 获取parentId
-        String parentId = DictInjectUtil.parseParentId(inObj, anno, dictProps);
+        String parentId = DictInjectUtil.parseParentId(injectKey.getObj(), injectKey.getAnno(),
+                dictProps);
         // 根据字典3要素生成 key
-        return DictInjectUtil.dictKey(anno.type(), parentId, id);
+        return DictInjectUtil.dictKey(injectKey.getAnno().type(), parentId, id);
     }
-
 
     @Override
     public Map<String, DictItem<Id>> list(List<InjectKey<InjectDict, Id>> injectKeys) {
@@ -55,8 +55,9 @@ public abstract class DictInjectStrategy<Id>
         }
         // 1. 获取所有type
         Set<String> typeSet = new HashSet<>(injectKeys.size());
-        for (InjectKey<InjectDict, Id> injectKey : injectKeys) {
-            typeSet.add(injectKey.getAnno().type());
+        String type;
+        for (InjectKey<InjectDict, Id> key : injectKeys) {
+            typeSet.add(key.getAnno().type());
         }
         // 2. 查询 type
         List<DictItem<Id>> valueList = this.list(typeSet.toArray(new String[0]));

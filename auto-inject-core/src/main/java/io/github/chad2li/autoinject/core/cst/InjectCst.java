@@ -28,12 +28,16 @@ public class InjectCst {
      */
     public static final String FIELD_DICT_ITEM_SUFFIX = "Item";
     /**
-     * {@link Inject} 子注解的注入目标属性名称
+     * 注入源属性名称
      */
-    public static final String DEFAULT_TARGET_FIELD_NAME = "targetField";
+    public static final String FROM_FIELD_NAME = "fromField";
     /**
-     * 普通的字值属性
+     * targetField提取值的spel
      */
-    public static final String NORMAL_STRATEGY = "NORMAL";
+    public static final String TARGET_SPEL_NAME = "targetSpel";
+    /**
+     * 解析时root
+     */
+    public static final String SPEL_VALUE_ROOT = "value";
 
 }

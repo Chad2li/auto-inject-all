@@ -1,16 +1,21 @@
 package io.github.chad2li.autoinject.dict;
 
-import cn.hutool.core.util.ReflectUtil;
+import io.github.chad2li.autoinject.core.annotation.Inject;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
-import io.github.chad2li.autoinject.core.util.AutoInjectUtil;
+import io.github.chad2li.autoinject.core.strategy.AutoInjectStrategy;
+import io.github.chad2li.autoinject.core.util.InjectQueryUtil;
+import io.github.chad2li.autoinject.core.util.InjectSetUtil;
+import io.github.chad2li.autoinject.core.util.ReflectUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
-import io.github.chad2li.autoinject.dict.cst.DictCst;
 import io.github.chad2li.autoinject.dict.dto.DictItem;
 import io.github.chad2li.autoinject.dict.strategy.DictInjectStrategy;
 import io.github.chad2li.autoinject.dict.util.DictInjectUtil;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +41,10 @@ public class AutoInjectUtilTest {
 
     private DictInjectStrategy dictInjectStrategy;
 
+    private AutoInjectStrategy schoolStrategy;
+
+    private static final String SCHOOL_STRATEGY_NAME = "SCHOOL";
+
     @Before
     public void before() {
         dictProps = new DictAutoProperties();
@@ -53,6 +62,24 @@ public class AutoInjectUtilTest {
                 return null;
             }
         };
+        schoolStrategy = new AutoInjectStrategy<Long, Long, SchoolDemo, Inject>() {
+            @Override
+            public String strategy() {
+                return SCHOOL_STRATEGY_NAME;
+            }
+
+            @Override
+            public boolean useFullQuery() {
+                return false;
+            }
+
+            @Override
+            public Map<Long, SchoolDemo> list(Set<Long> longs) {
+                Map<Long, SchoolDemo> map = new HashMap<>(1);
+                map.put(11L, new SchoolDemo(11L, "测试学校-11"));
+                return map;
+            }
+        };
         DictAutoProperties dictProps = new DictAutoProperties();
         ReflectUtil.setFieldValue(dictInjectStrategy, "dictProps", dictProps);
     }
@@ -61,15 +88,19 @@ public class AutoInjectUtilTest {
     public void queryDictAnnotation() {
         DemoVo demo = demoVo(true);
         // 1.
-        Set<InjectKey<InjectDict, Object>> injectKeys = AutoInjectUtil.queryDictAnnotation(demo);
+        List<InjectKey> injectKeys = InjectQueryUtil.queryDictAnnotation(demo);
         Set<String> typeSet =
-                injectKeys.stream().map(it -> it.getAnno().type()).collect(Collectors.toSet());
+                injectKeys.stream()
+                        .map(InjectKey::getAnno)
+                        .filter(it -> it instanceof InjectDict)
+                        .map(it -> ((InjectDict) it).type()).collect(Collectors.toSet());
         Assert.assertEquals(2, typeSet.size());
         // role没有getter方法
         Assert.assertTrue(typeSet.contains("gender"));
         Assert.assertTrue(typeSet.contains("city"));
         // 2.
-        AutoInjectUtil.injectionDict(DictCst.DICT, demo, dictMap(), dictInjectStrategy);
+        InjectSetUtil.setInjectValue(injectKeys, dictMap(), dictInjectStrategy);
+        InjectSetUtil.setInjectValue(injectKeys, schoolStrategy.list(injectKeys), schoolStrategy);
         assertDemo(demo);
         // - list
         assertDemo(demo.getList().get(0));
@@ -87,11 +118,12 @@ public class AutoInjectUtilTest {
         Assert.assertEquals("男", demo.getGenderItem().getName());
         Assert.assertEquals("浙江", demo.getProvinceDict().getName());
         Assert.assertEquals("杭州", demo.getCityDict().getName());
+        Assert.assertEquals("测试学校-11", demo.schoolName);
         Assert.assertNull(demo.getRoleItem());
     }
 
 
-    private Map<String, DictItem<String>> dictMap() {
+    private Map dictMap() {
         Map<String, DictItem<String>> dictMap = new HashMap<>();
         // gender
         DictItem<String> male = dict("1", "0", "gender", "男");
@@ -130,10 +162,12 @@ public class AutoInjectUtilTest {
 
     private DemoVo demoVo(boolean isRoot) {
         DemoVo demoVo = new DemoVo();
-        demoVo.setGender("1");
+        demoVo.setGenderId("1");
         demoVo.setProvince("zhejiang");
         demoVo.setCity("hangzhou");
         demoVo.role = "Normal";
+        demoVo.schoolId = 11L;
+        demoVo.self = demoVo;
         if (!isRoot) {
             return demoVo;
         }
@@ -156,22 +190,26 @@ public class AutoInjectUtilTest {
         return demoVo;
     }
 
-    @ToString
+    @ToString(exclude = {"self"})
     public class DemoVo {
         @Getter
-        @InjectDict(type = "gender")
-        private String gender;
+        private String genderId;
         @Getter
-        @InjectDict(targetField = "provinceDict", type = "city")
+        @InjectDict(type = "gender")
+        private DictItem<String> genderItem;
+        @Getter
         private String province;
         @Getter
-        @InjectDict(targetField = "cityDict", type = "city", parentField = "province")
         private String city;
         /**
          * 无get方法属性
          */
         @InjectDict(type = "role")
         private String role;
+        private Long schoolId;
+        @Getter
+        @Inject(strategy = SCHOOL_STRATEGY_NAME, fromField = "schoolId", targetSpel = "value.name")
+        private String schoolName;
         @Getter
         private List<DemoVo> list;
         @Getter
@@ -179,16 +217,19 @@ public class AutoInjectUtilTest {
         @Getter
         private Set<DemoVo> set;
         @Getter
-        private DictItem<String> genderItem;
-        @Getter
+        @InjectDict(fromField = "province", type = "city")
         private DictItem<String> provinceDict;
         @Getter
+        @InjectDict(fromField = "city", type = "city", parentField = "province")
         private DictItem<String> cityDict;
         @Getter
         private DictItem<String> roleItem;
+        // 测试循环
+        @Getter
+        private DemoVo self;
 
-        public void setGender(String gender) {
-            this.gender = gender;
+        public void setGenderId(String genderId) {
+            this.genderId = genderId;
         }
 
         public void setProvince(String province) {
@@ -226,5 +267,13 @@ public class AutoInjectUtilTest {
         public void setRoleItem(DictItem<String> roleItem) {
             this.roleItem = roleItem;
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SchoolDemo {
+        private Long id;
+        private String name;
     }
 }

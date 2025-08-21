@@ -1,15 +1,14 @@
 package io.github.chad2li.autoinject.dict.util;
 
-import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.ReflectUtil;
 import io.github.chad2li.autoinject.core.properties.DictAutoProperties;
+import io.github.chad2li.autoinject.core.util.ReflectUtil;
+import io.github.chad2li.autoinject.core.util.StrUtil;
+import io.github.chad2li.autoinject.core.util.ToolUtil;
 import io.github.chad2li.autoinject.dict.annotation.InjectDict;
 import io.github.chad2li.autoinject.dict.dto.DictItem;
-import org.springframework.lang.Nullable;
 
 /**
- * TODO-类说明
+ * 字典注入工具
  *
  * @author chad
  * @copyright 2023 chad
@@ -25,18 +24,17 @@ public class DictInjectUtil {
      * @author chad
      * @since 1 by chad at 2023/8/25
      */
-    @Nullable
     public static String parseParentId(Object dictObj, InjectDict injectDict,
                                        DictAutoProperties dictProps) {
-        if (ObjectUtil.hasEmpty(dictObj, injectDict)) {
+        if (ToolUtil.hasEmpty(dictObj, injectDict)) {
             return null;
         }
-        if (CharSequenceUtil.isNotEmpty(injectDict.parent())) {
+        if (StrUtil.isNotEmpty(injectDict.parent())) {
             // parent优先级高于parentField
             return injectDict.parent();
         }
         String parentFieldName = injectDict.parentField();
-        if (CharSequenceUtil.isEmpty(parentFieldName)) {
+        if (StrUtil.isEmpty(parentFieldName)) {
             // parent和parentField都无值，则返回配置值
             return dictProps.getDefaultParentId();
         }

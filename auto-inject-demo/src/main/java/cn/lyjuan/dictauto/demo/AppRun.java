@@ -1,5 +1,6 @@
 package cn.lyjuan.dictauto.demo;
 
+import io.github.chad2li.autoinject.core.StartInjectConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @ImportAutoConfiguration(classes = {
 //        DictAopHandler.class
+        StartInjectConfiguration.class
 })
 @SpringBootApplication
 public class AppRun {
