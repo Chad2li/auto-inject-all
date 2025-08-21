@@ -1,6 +1,5 @@
 package io.github.chad2li.autoinject.dict;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import io.github.chad2li.autoinject.core.annotation.Inject;
 import io.github.chad2li.autoinject.core.cst.InjectCst;
 import io.github.chad2li.autoinject.core.dto.InjectKey;
@@ -68,10 +67,12 @@ public class AutoInjectUtilTest {
             public String strategy() {
                 return SCHOOL_STRATEGY_NAME;
             }
+
             @Override
             public boolean useFullQuery() {
                 return false;
             }
+
             @Override
             public Map<Long, SchoolDemo> list(Set<Long> longs) {
                 Map<Long, SchoolDemo> map = new HashMap<>(1);

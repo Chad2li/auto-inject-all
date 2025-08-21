@@ -94,8 +94,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <publishingServerId>central</publishingServerId>
-                        <tokenAuth>true</tokenAuth>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        <autoPublish>true</autoPublish>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -174,9 +173,9 @@
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <excludeArtifacts>
+                        <artifact>auto-inject-demo</artifact>
+                    </excludeArtifacts>
                 </configuration>
             </plugin>
             <plugin>

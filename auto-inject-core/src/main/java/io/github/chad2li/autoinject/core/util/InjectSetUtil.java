@@ -90,6 +90,10 @@ public class InjectSetUtil {
             // 简单类型值
             key = keyFunction.key(injectKey, fromFieldValue);
             injectValue = valueMap.get(key);
+            if (ToolUtil.isNotEmpty(injectValue)) {
+                // spel解析
+                injectValue = InjectSetUtil.getSpelValue(injectValue, injectKey.getAnno());
+            }
         }
 
         if (null == injectValue) {
